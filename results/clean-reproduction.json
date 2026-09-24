@@ -1,0 +1,160 @@
+{
+  "status": "final named archives passed candidate extraction and immutable post-record extraction",
+  "date": "2026-09-19",
+  "archive_layout": {
+    "project_archive": "dependency-complete-safe-speculation-web-execution-graphs.zip",
+    "project_root": "dependency-complete-safe-speculation-web-execution-graphs",
+    "project_root_entries": [
+      "paper",
+      "artifact",
+      "research-plan.md",
+      "CURRENT-STATE.md"
+    ],
+    "standalone_archive": "dependency-complete-safe-speculation.zip",
+    "standalone_root": "dependency-complete-safe-speculation"
+  },
+  "scientific_reproduction": {
+    "exact_result_csv_match": true,
+    "exact_declared_count_match": true,
+    "unit_tests": {
+      "passed": 13,
+      "failed": 0
+    },
+    "suites": [
+      {
+        "suite": "relations",
+        "exact_result_match": true,
+        "counts": {
+          "graph_instances": 1056,
+          "independent_replay_rows": 2048,
+          "monotonicity_environment_edges": 526336
+        }
+      },
+      {
+        "suite": "padding",
+        "exact_result_match": true,
+        "counts": {
+          "graph_instances": 510,
+          "repaired_environment_rows": 4080
+        }
+      },
+      {
+        "suite": "circuits",
+        "exact_result_match": true,
+        "counts": {
+          "graph_instances": 128,
+          "independent_replay_rows": 40960,
+          "seed": 1729
+        }
+      },
+      {
+        "suite": "general",
+        "exact_result_match": true,
+        "counts": {
+          "graph_instances": 256,
+          "independent_replay_rows": 32768,
+          "seed": 65537
+        }
+      },
+      {
+        "suite": "gaps",
+        "exact_result_match": true,
+        "counts": {
+          "gap_instances": 8,
+          "correlated_composition": {
+            "joint_adaptive": 1,
+            "separate_adaptive_sum": 2,
+            "joint_uniform": 2
+          }
+        }
+      },
+      {
+        "suite": "baselines",
+        "exact_result_match": true,
+        "counts": {
+          "tight_instances": 12,
+          "random_graphs": 128,
+          "descendant_soundness_rows": 2072,
+          "observation_refinement_environment_rows": 1024,
+          "seed": 104729
+        }
+      },
+      {
+        "suite": "negatives",
+        "exact_result_match": true,
+        "counts": {
+          "negative_controls": 24,
+          "detected": 24
+        }
+      }
+    ],
+    "staged_clean_run_observation": {
+      "validation_cpu_seconds": 5.111820044,
+      "child_cpu_seconds": 9.886085999999999,
+      "wall_seconds": 9.903229993999958,
+      "peak_child_rss_kib": 104232,
+      "workers": 1,
+      "scope": "candidate named-archive clean extraction; timing and RSS are observations, not equality targets"
+    }
+  },
+  "documented_command_checks": {
+    "analyze": {
+      "passed": true,
+      "adaptive_cost": 1,
+      "uniform_cost": 3
+    },
+    "retained_certificate_verify": true,
+    "generated_uniform_certificate_verify": true,
+    "compileall": true,
+    "all_seven_individual_validation_commands": true,
+    "unit_tests": {
+      "passed": 13,
+      "failed": 0
+    }
+  },
+  "paper_clean_build": {
+    "command": "python build.py",
+    "passed": true,
+    "main_pages": 12,
+    "supplement_pages": 6,
+    "main_bibliography_entries": 39,
+    "page_size": "letter",
+    "supplied_class_and_bst_byte_identical": true,
+    "all_fonts_embedded": true,
+    "encrypted": false,
+    "visual_page_inspection": true,
+    "overfull_boxes": 0,
+    "undefined_references_or_citations": false,
+    "missing_character_warnings": false
+  },
+  "literature_and_reference_checks": {
+    "manuscript_references": 39,
+    "all_manuscript_references_cited": true,
+    "reference_verification_rows": 39,
+    "full_paper_calibration_rows": 29,
+    "required_calibration": {
+      "tpds": 12,
+      "influential": 5,
+      "adjacent": 5
+    },
+    "extra_direct_or_closest_not_double_counted": 7,
+    "external_resource_rows": 49
+  },
+  "final_archive_verification": {
+    "zip_integrity": true,
+    "fresh_extraction": true,
+    "exact_root_layout": true,
+    "embedded_and_standalone_artifact_byte_agreement_before_execution": true,
+    "no_disposable_build_or_python_cache_files": true,
+    "all_documented_commands_passed": true,
+    "all_seven_individual_validation_commands_passed": true,
+    "paper_rebuilt_from_extracted_archive": true,
+    "rebuilt_main_pages": 12,
+    "rebuilt_supplement_pages": 6,
+    "rebuilt_main_bibliography_entries": 39,
+    "rebuilt_pdf_text_matches_retained": true,
+    "rebuilt_pdf_96dpi_renders_pixel_identical_to_retained": true,
+    "verification_record_mode": "These release assertions were written before immutable final packaging and accepted only after the exact resulting ZIP files were freshly extracted and retested without any subsequent archive mutation."
+  },
+  "caveat": "This is self-reproduction of finite evidence and document builds, not independent peer review, proof-assistant verification, browser validation, or production performance evidence. Timing and resident-memory observations are not equality targets."
+}
