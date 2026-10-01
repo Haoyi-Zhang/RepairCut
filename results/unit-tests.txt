@@ -13,6 +13,6 @@ test_roundtrip (test_model.SemanticsTests.test_roundtrip) ... ok
 test_row_limit (test_model.SemanticsTests.test_row_limit) ... ok
 
 ----------------------------------------------------------------------
-Ran 13 tests in 0.157s
+Ran 13 tests in 0.124s
 
 OK

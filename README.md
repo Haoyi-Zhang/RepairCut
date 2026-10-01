@@ -64,6 +64,10 @@ python -m speculation verify cases/active-input-gap.json /tmp/speculation-certif
 
 Generated directories and certificates must not already exist.
 
+Certificate rows contain exactly `environment`, `selected`, `cache`, `trace`, and
+`output`. Verification replays those fields and recomputes the reference output;
+there is no stored reference-output field.
+
 ## Recorded campaign
 
 | Evidence family | Retained count |
@@ -72,13 +76,14 @@ Generated directories and certificates must not already exist.
 | Complete-state padding graphs | 510 |
 | Translated random circuits | 128 |
 | General-DAG observer views | 256 |
-| Independent semantic comparisons | 75,776 |
+| Independent success-predicate comparisons | 75,776 |
 | Monotonicity environment/extension edges | 526,336 |
 | Descendant-invalidation soundness rows | 2,072 |
 | Observation-refinement environment rows | 1,024 |
 | Fixed-seed random baseline DAGs | 128 |
 | Tight invalidation instances | 12 |
 | Adaptive/uniform gap instances | 8 |
+| Exhaustive gap-family mask/environment pairs (p=1,2,3) | 168 |
 | Negative controls detected | 24/24 |
 | Unit tests | 13 |
 
@@ -89,9 +94,11 @@ influential, five adjacent, and seven non-counted direct/closest comparisons),
 and `external_resources.csv` records all scholarly and workflow inputs.
 
 The random-baseline distribution is retained in `results/validation/baselines.csv`.
-It includes semantic-cancellation cases with positive syntactic invalidation but
-zero semantic optimum; multiplicative ratios are therefore reported only when
-the optimum is positive.
+The syntactic and semantic cost columns yield 53 strict gaps, 120 positive
+optima, maximum positive ratio 4, and exact positive-ratio mean 187/144. A
+positive optimum uses `syntactic_cost / optimal_cost`; a zero optimum is marked
+`undefined`, including the three positive-invalidation/zero-optimum cases. The
+Table IV cost frequencies are asserted by the validation code.
 
 ## Resource guards
 
@@ -99,6 +106,11 @@ Each suite runs in one child process with one CPU, a 3 GiB virtual-address cap,
 35 CPU seconds, and a 40-second wall timeout. The exact evaluator rejects cases
 above 2^25 environment/repair rows or a conservative 2 GiB bit-vector payload.
 A timeout or admission rejection is a failure, never a scientific answer.
+
+The retained original seven-suite record reports 5.275391517 CPU seconds,
+5.290027825999914 wall seconds, and 94,508 KiB maximum child RSS; the circuits
+suite reports 2.74431932 CPU seconds. Clean reproduction has a separate timing
+record. Scientific equality uses CSV rows and declared counts, not timing or RSS.
 
 ## Evidence map
 

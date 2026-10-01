@@ -60,7 +60,7 @@ assumed. A table of one repair per environment can have exponentially many rows.
 
 ## 2. Terminal observation: an operational quantified-circuit realization
 
-### Lemma 1 (budget selection and escape)
+### Main Lemma 1 (budget selection and escape)
 
 Let F(u,x) be an arbitrary Boolean circuit, where u has q bits and x has m>=1
 bits. A graph of polynomial size can be constructed with p=3m+1 speculative
@@ -117,12 +117,12 @@ Without a forced all-fresh success path, an unsatisfiable F could destroy this
 invariant. A chain of m rather than m+1 would be affordable, accepting even a
 false F. The negative-control test makes precisely that one-gate mutation.
 
-### Theorem 1 (terminal-observer complexity)
+### Main Theorem 4 (terminal-observer complexity)
 
 The pointwise question C(theta)<=k is NP-complete. The adaptive question A<=k
 is Pi_2^P-complete. The uniform question U<=k is Sigma_2^P-complete. Hardness
 holds with the restrictions and upward-closed successful repair families of
-Lemma 1.
+Main Lemma 1.
 
 **Membership.** Given theta and a p-bit selection mask, caching, the mixed
 execution, reference execution, and observation equality take time polynomial
@@ -133,7 +133,7 @@ Domains of fixed inputs can be substituted out. These are the circuit
 characterizations of the respective second-level classes.
 
 **Hardness.** For the pointwise case, start with circuit SAT F(x), take no u,
-and fix the evaluated environment to d=1. Lemma 1 is a polynomial reduction.
+and fix the evaluated environment to d=1. Main Lemma 1 is a polynomial reduction.
 For the adaptive case start with a quantified circuit forall u exists x F(u,x).
 The new universal d=0 branch is automatically true. Its d=1 branch is equivalent
 to the original quantified circuit by the lemma. For uniform repair start with
@@ -156,7 +156,7 @@ value of prefix gate v, and let
 
   M(theta) = {v in P : c_v != f_v(theta)}.
 
-### Theorem 2 (unique least repair)
+### Main Theorem 1 (unique least repair)
 
 For complete-state observation, G(theta,R) iff M(theta) is contained in R.
 Consequently M(theta) is the unique least successful repair by inclusion,
@@ -180,7 +180,7 @@ input. Some such descendants already have their reference value. Conversely it
 does not require that a selected gate's stale inputs would have sufficed: the
 induction uses the reference correctness of ALL earlier slots once M is selected.
 
-### Theorem 3 (complete-state decision complexity)
+### Main Theorem 2 (complete-state decision complexity)
 
 The pointwise decision is in P (one prediction/reference comparison pass).
 Both A<=k and U<=k are coNP-complete for complete-state observation.
@@ -190,7 +190,7 @@ with more than k mismatches. Failure of U<=k has a polynomial certificate of
 k+1 distinct prefix nodes, each accompanied by an environment witnessing that
 node's mismatch. There are at most p such nodes, so this certificate has
 polynomial size. Different nodes may need different environments. These
-certificates and Theorem 2 put both decisions in coNP.
+certificates and Main Theorem 1 put both decisions in coNP.
 
 **Uniform hardness.** Reduce UNSAT of a Boolean formula F(u). Construct a fully
 speculative Boolean circuit for F and z=d AND F. Let N be its number of gates,
@@ -212,7 +212,7 @@ A<=k exactly for unsatisfiable F. The number of children is O(sN), polynomial
 in the formula size. CNF instances with no clauses can be handled separately;
 the nonempty subclass already gives UNSAT hardness. QED.
 
-### Theorem 4 (observation refinement)
+### Main Theorem 3 (observation refinement)
 
 Let two instances share the same graph, cache, environment domain, and repair
 semantics, and let observer O_1 be a subsequence of observer O_2. Every repair
@@ -226,8 +226,8 @@ the pointwise inequality; minimizing over uniform repairs preserves it as well. 
 
 A stronger observer can therefore require more repair while simplifying its
 choice structure. Terminal observation has the NP/Pi_2^P/Sigma_2^P classifications
-of Theorem 1, whereas complete-state observation has the P/coNP classifications
-of Theorem 3. This juxtaposition does not assert a strict separation between
+of Main Theorem 4, whereas complete-state observation has the P/coNP classifications
+of Main Theorem 2. This juxtaposition does not assert a strict separation between
 complexity classes: it says that a monotone increase in the semantic obligation
 does not imply a monotone increase in the complexity class of the corresponding
 decision problem. The complete-state formula still has exponential environment
@@ -240,7 +240,7 @@ differ from their predictions. Let D(theta) be the cached prefix nodes reachable
 from Delta(theta) by declared operand edges. This is the standard syntactic
 invalidity rule that discards every cached descendant of changed data.
 
-### Theorem 5 (soundness and tight over-repair of descendant invalidation)
+### Main Theorem 5 (soundness and tight over-repair of descendant invalidation)
 
 Repairing D(theta) succeeds for every observer in the declared pure DAG model.
 Under complete-state observation, M(theta) is a subset of D(theta). If
@@ -254,7 +254,7 @@ node in D is selected. Every one of its inputs is an actual input, a retained
 clean slot already equal to reference, or an earlier selected slot re-evaluated
 to reference. Determinism therefore makes the selected node equal to reference.
 Every prefix slot is now correct, and the fresh suffix and any projected observer
-are correct by the same induction. For complete-state observation, Theorem 2's
+are correct by the same induction. For complete-state observation, Main Theorem 1's
 necessity immediately gives M subset D.
 
 **Approximation and tightness.** The policy selects at most p nodes, while a
@@ -262,7 +262,7 @@ positive optimum selects at least one, so its ratio is at most p. For every p,
 use one uncertain input d predicted zero and p independent cached nodes. Let
 s_1=COPY(d), and for 2<=i<=p let s_i=XOR(d,d). Observe every cached slot. When
 d=1, every s_i is a declared descendant of d, so descendant invalidation selects
-all p nodes. Only s_1 changes value; Theorem 2 gives C=1. Hence the ratio is p.
+all p nodes. Only s_1 changes value; Main Theorem 1 gives C=1. Hence the ratio is p.
 If all p nodes instead compute XOR(d,d), the optimum is zero while the policy
 still selects p, which rules out a multiplicative bound at zero optimum. QED.
 
@@ -272,7 +272,7 @@ establishes safety of invalidation, not work optimality.
 
 ## 5. The maximum price of fixing repairs before revelation
 
-### Theorem 6 (tight p-fold gap)
+### Main Theorem 6 (tight p-fold gap)
 
 For p>=1 the largest possible ratio U/A among instances with A>0 is p. It is
 attained with a COPY-only star prefix and a monotone one-bit terminal observer.
@@ -282,11 +282,22 @@ p independent selector bits, all revealed with d. Observe
 
   y = OR_i (u_i AND s_i).
 
-Reference output is d AND OR_i u_i. When it is zero, no repair is needed. When
-it is one, choose any i with u_i=1 and repair s_i. Hence A=1. For each unit vector
-u with only its ith bit set and d=1, success requires s_i. A uniform repair must
-therefore contain every s_i, yielding U=p. The general upper bound follows from
-U<=p and A>=1. If A=0 then U=0, so division by zero is not a gap example. QED.
+Reference output is d AND OR_i u_i. Write J(u)={s_i : u_i=1}. For theta=(d,u),
+the exact successful family is
+
+  S_theta = 2^P,                                      if d=0 or J(u)=empty;
+  S_theta = {R subseteq P : R intersects J(u)},       if d=1 and J(u) nonempty.
+
+In the first branch both mixed and reference output are zero for every repair.
+In the second, the reference is one and the mixed output is one exactly when a
+repaired active slot contributes one. Thus every nonzero selector has a one-slot
+adaptive repair and some repair is necessary, so A=1. Each nonzero unit-vector
+environment forces its corresponding slot. Over the full domain, intersecting
+those successful families leaves only P, so U=p. For a restricted legal domain
+E', the uniform-success family is exactly intersection_{theta in E'} S_theta;
+equivalently its members are the hitting sets of the nonempty J(u) that occur
+with d=1. The upper bound follows from U<=p and A>=1. If A=0 then U=0, so division
+by zero is not a gap example. QED.
 
 ## 6. Composition requires shared-input cost profiles
 
@@ -297,7 +308,7 @@ repair sets. For a legal joint environment theta, theta_i is its restriction to
 component i. Component domains are exactly the projections of legal joint
 environments, rather than supersets that introduce impossible inputs.
 
-### Theorem 7 (composition)
+### Main Theorem 7 (composition)
 
   C_joint(theta) = sum_i C_i(theta_i),
   U_joint = sum_i U_i,
@@ -323,27 +334,28 @@ joint environment at most one component needs repair, so A_joint=1 rather than
 2. A uniform mask needs both nodes, giving U_joint=2. Retaining a cost profile
 indexed by the shared inputs, rather than only its maximum, is necessary here.
 
-## 7. Nonmonotonicity is possible but is not the source of Theorem 1
+## 7. Nonmonotonicity is possible but is not the source of Main Theorem 4
 
 In a different construction use H=XOR(t,f), two cached-zero COPY(d) selectors,
 an escape chain of length two, and output escape OR H. At d=1, repairing {t}
 succeeds, while its superset {t,f} fails; repairing the full prefix succeeds.
 Thus success is not generally upward closed. Taking the union of successful
 adaptive masks is not a generally valid way of obtaining a uniform mask. This
-example is separate from the monotone construction in Lemma 1: the hardness and
+example is separate from the monotone construction in Main Lemma 1: the hardness and
 tight adaptive/uniform gap do not depend on nonmonotonic repair behavior.
 
 ## 8. Executable certificates and finite verification obligations
 
-A pointwise certificate lists a selected prefix set of size at most k, the old
-cache, a complete mixed gate trace, and the final observation. A checker can
-recompute prediction, mixed execution, and reference execution in polynomial
-time and compare every field. An explicit adaptive certificate contains one
-pointwise certificate for every legal environment; a uniform certificate uses
-one identical selection set in all rows. Such domain enumeration is exponential
-in q. Checking a supplied exponentially long certificate is not a compact proof
-of the general quantified decision problem. A valid successful trace does not
-by itself establish minimality.
+Each explicit JSON row stores exactly environment, selected, cache, trace, and
+output. The verifier replays the selected mixed execution and compares the stored
+cache, complete mixed trace, and output with that replay. It recomputes the
+reference output instead of accepting a stored reference field, and requires the
+replayed output to equal that reference. An adaptive certificate contains one
+row for every legal environment; a uniform certificate additionally uses one
+identical selection set in all rows. Such domain enumeration is exponential in
+q. Checking a supplied exponentially long certificate is not a compact proof of
+the general quantified decision problem, and a successful trace does not by
+itself establish minimality.
 
 The artifact checks exact declared operand edges, graph schema, finite tables,
 Boolean gates, and all explicitly enumerated environments. It cannot check that

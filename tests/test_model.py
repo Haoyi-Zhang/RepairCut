@@ -15,10 +15,19 @@ class SemanticsTests(unittest.TestCase):
         self.assertEqual(load_graph(g.to_dict()),g)
 
     def test_gap_and_certificates(self):
-        g=gap_graph(3);a=analyze(g)
-        self.assertEqual((a.adaptive_min,a.uniform_min),(1,3))
-        self.assertTrue(verify(g,certificate(g,1,'adaptive',a.pointwise_mask)))
-        self.assertTrue(verify(g,certificate(g,3,'uniform',[a.uniform_mask])))
+        for p in (1,2,3):
+            g=gap_graph(p);a=analyze(g)
+            self.assertEqual((a.adaptive_min,a.uniform_min),(1,p))
+            envs=list(g.environments())
+            for mask in range(1<<a.p):
+                repair={name for i,name in enumerate(g.speculative) if mask>>i&1}
+                for row,e in enumerate(envs):
+                    active={f's{i}' for i in range(p) if e[f'u{i}']==1}
+                    expected=e['d']==0 or not active or bool(repair&active)
+                    self.assertEqual(bool(a.good_environments(mask)>>row&1),expected)
+                    self.assertEqual(run(g,e,repair)[0]==run(g,e,None)[0],expected)
+            self.assertTrue(verify(g,certificate(g,1,'adaptive',a.pointwise_mask)))
+            self.assertTrue(verify(g,certificate(g,p,'uniform',[a.uniform_mask])))
 
     def test_explicit_stack_deep_chain(self):
         nodes=tuple(Node(f'n{i}','copy',('d' if i==0 else f'n{i-1}',),True) for i in range(10000))

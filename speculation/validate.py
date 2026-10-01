@@ -10,6 +10,7 @@ from pathlib import Path
 import random
 import resource
 import time
+from fractions import Fraction
 
 from .model import Graph, Node, ARITY, load_graph
 from .builders import (reduction, monotone_reduction, relation_truth, gap_graph,
@@ -175,9 +176,41 @@ def general():
 
 def gaps():
     records=[]
+    family_pairs = 0
+    unit_vectors = 0
+    uniform_intersections = 0
     for m in range(1, 9):
         g = gap_graph(m); a=analyze(g)
         require(a.adaptive_min == 1 and a.uniform_min == m,'tight gap failed')
+        environments = list(g.environments())
+        full_environment_bits = (1 << len(environments)) - 1
+        uniform_masks = []
+        for mask in range(1 << a.p):
+            if a.good_environments(mask) == full_environment_bits:
+                uniform_masks.append(mask)
+            if m <= 3:
+                repair = selected(g, mask)
+                for row, environment in enumerate(environments):
+                    active = {f's{i}' for i in range(m) if environment[f'u{i}'] == 1}
+                    expected = (environment['d'] == 0 or not active or bool(repair & active))
+                    enumerated = bool(a.good_environments(mask) >> row & 1)
+                    replayed = run(g, environment, repair)[0] == run(g, environment, None)[0]
+                    require(enumerated == expected == replayed,
+                            'gap success-family characterization failed')
+                    family_pairs += 1
+        require(uniform_masks == [(1 << m) - 1],
+                'full-domain uniform family is not the singleton full repair')
+        uniform_intersections += 1
+        for active_index in range(m):
+            environment = {'d': 1, **{f'u{i}': int(i == active_index) for i in range(m)}}
+            row = environments.index(environment)
+            successful = [mask for mask in range(1 << a.p)
+                          if a.good_environments(mask) >> row & 1]
+            require(successful and all(mask >> active_index & 1 for mask in successful),
+                    'unit-vector environment does not force its active slot')
+            require((1 << active_index) in successful,
+                    'unit-vector environment lacks a one-slot adaptive repair')
+            unit_vectors += 1
         records.append(dict(prefix=m,uncertain_inputs=a.q,rows=a.rows,
                             adaptive=a.adaptive_min,uniform=a.uniform_min))
     g=correlated_components(); a=analyze(g)
@@ -187,6 +220,9 @@ def gaps():
         obj=g.to_dict(); obj['observations']=[o]
         singles.append(analyze(load_graph(obj)).adaptive_min)
     require(singles==[1,1], 'component scalar maximum failed')
+    require(family_pairs == 168, 'p=1,2,3 success-family coverage changed')
+    require(unit_vectors == 36, 'unit-vector coverage changed')
+    require(uniform_intersections == 8, 'uniform-intersection coverage changed')
     return records,dict(gap_instances=8,correlated_composition=dict(joint_adaptive=1,
                             separate_adaptive_sum=sum(singles),joint_uniform=2))
 
@@ -210,14 +246,15 @@ def baselines():
             if e['d']==1:
                 require(len(reach)==p and len(mismatch)==1,
                         'tight invalidation gap family failed')
-                ratio=p
+                ratio=float(Fraction(len(reach), len(mismatch)))
             else:
-                ratio=0
+                ratio='undefined'
             records.append(dict(family='tight-invalidation',case=p,environment_d=e['d'],
                                 prefix=p,syntactic_cost=len(reach),optimal_cost=len(mismatch),
                                 ratio_when_positive=ratio))
 
     rng=random.Random(104729)
+    random_pairs=[]
     for index in range(128):
         g0=random_formula(rng,1,2,count=9)
         terminal=Graph(g0.inputs,g0.domains,
@@ -243,12 +280,51 @@ def baselines():
                     'random mismatch escaped invalidation')
             sound_rows += 2
             refinement_rows += 1
+        syntactic_cost=max(len(descendant_invalidation(terminal,e))
+                           for e in terminal.environments())
+        optimal_cost=strong_result.adaptive_min
+        ratio=(float(Fraction(syntactic_cost, optimal_cost))
+               if optimal_cost > 0 else 'undefined')
+        if optimal_cost > 0:
+            require(ratio == syntactic_cost / optimal_cost,
+                    'positive-denominator ratio does not match the two cost columns')
+        else:
+            require(ratio == 'undefined',
+                    'zero-denominator ratio must be explicitly undefined')
+        random_pairs.append((syntactic_cost, optimal_cost))
         records.append(dict(family='random-refinement',case=index,environment_d=-1,
                             prefix=len(terminal.speculative),
-                            syntactic_cost=max(len(descendant_invalidation(terminal,e))
-                                               for e in terminal.environments()),
-                            optimal_cost=strong_result.adaptive_min,
-                            ratio_when_positive=0))
+                            syntactic_cost=syntactic_cost,
+                            optimal_cost=optimal_cost,
+                            ratio_when_positive=ratio))
+
+    expected_frequency = (
+        (5, 0, 0, 0, 0),
+        (0, 20, 0, 0, 0),
+        (2, 10, 17, 0, 0),
+        (1, 3, 17, 21, 0),
+        (0, 1, 3, 16, 12),
+    )
+    frequency = tuple(tuple(sum((s, o) == (syntactic, optimal)
+                                    for s, o in random_pairs)
+                              for optimal in range(5))
+                      for syntactic in range(5))
+    positive_ratios = [Fraction(s, o) for s, o in random_pairs if o > 0]
+    mean_ratio = sum(positive_ratios, Fraction(0, 1)) / len(positive_ratios)
+    require(len(random_pairs) == 128, 'random baseline case count changed')
+    require(sum(s > o for s, o in random_pairs) == 53,
+            'random baseline strict-gap count changed')
+    require(sum(s == o for s, o in random_pairs) == 75,
+            'random baseline equality count changed')
+    require(len(positive_ratios) == 120,
+            'random baseline positive-optimum count changed')
+    require(max(positive_ratios) == 4,
+            'random baseline maximum ratio changed')
+    require(mean_ratio == Fraction(187, 144),
+            'random baseline mean ratio changed')
+    require(frequency == expected_frequency,
+            'random baseline cost-pair frequency table changed')
+
     return records,dict(tight_instances=12,random_graphs=128,
                         descendant_soundness_rows=sound_rows,
                         observation_refinement_environment_rows=refinement_rows,seed=104729)
