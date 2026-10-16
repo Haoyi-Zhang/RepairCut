@@ -37,6 +37,10 @@ jobs:
             python -B -X utf8 .github/scripts/check_repository.py
             python -B -X utf8 reproduce.py --output raw-output/reproduced
           ' 2>&1 | tee raw-output/run.log
+      - name: Verify Python-direct vector schematics
+        run: |
+          python -m pip install -r requirements-figures.txt
+          python -B figures/check_figures.py
       - name: Preserve raw outputs on success or failure
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02

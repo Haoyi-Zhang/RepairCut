@@ -156,6 +156,15 @@ CPU seconds, 6.571371 elapsed seconds, and 37,152 KiB peak child RSS; the raw
 record is in `results/measurements/current-linux/`. Earlier measurements remain
 in `results/cpu-accounting.json`. Scientific equality excludes timing and RSS.
 
+## Optional manuscript figures
+
+The three semantic diagrams are self-contained direct-Python vector drawings.
+Install `requirements-figures.txt`, then run `python -B figures/draw_schematics.py`
+and `python -B figures/check_figures.py`. To update the full manuscript, use
+`--output /path/to/paper/figures`; its build entry does this before TeX.
+This optional drawing dependency does not change the standard-library semantic
+reproduction commands or regenerate scientific observations.
+
 ## Evidence map
 
 - `claim_evidence_ledger.csv`: each manuscript claim mapped to proof/checker,
